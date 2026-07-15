@@ -102,8 +102,8 @@
                     Mở file Audio trên Google Drive
                 </a>
 
-                <!-- Audio Player (Đã sửa lại thành file audio.wav) -->
-                <audio id="myAudio" controls class="w-full max-w-2xl outline-none rounded-full mb-4 shadow-sm">
+                <!-- Audio Player Tối ưu cho Mobile (iOS + Android) -->
+                <audio id="myAudio" controls playsinline preload="auto" class="w-full max-w-2xl outline-none rounded-full mb-4 shadow-sm">
                     <source id="audioSource" src="audio.wav" type="audio/wav">
                     Trình duyệt của bạn không hỗ trợ phát âm thanh.
                 </audio>
@@ -199,16 +199,18 @@ That is the end of our dictation. Great job, everyone!</span>
     const localAudioInput = document.getElementById('localAudio');
     const fileNameDisplay = document.getElementById('fileNameDisplay');
     
-    // Xử lý khi chọn file âm thanh từ máy tính
+    // Xử lý khi chọn file âm thanh từ máy tính/điện thoại
     localAudioInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
             const fileURL = URL.createObjectURL(file);
             audio.src = fileURL;
+            audio.load(); // Ép trình duyệt thiết bị di động tải lại tài nguyên mới
+            
             fileNameDisplay.innerHTML = `<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg> Đang phát: ${file.name}`;
             fileNameDisplay.classList.remove('hidden');
             audioError.classList.add('hidden'); // Ẩn thông báo lỗi Drive
-            audio.play().catch(e => console.log("Auto-play prevented"));
+            audio.play().catch(e => console.log("Auto-play prevented by mobile browser rules. User needs to tap Play."));
         }
     });
 
@@ -224,9 +226,11 @@ That is the end of our dictation. Great job, everyone!</span>
         }
     });
 
-    // Hàm tua audio
+    // Hàm tua audio (Đã tinh chỉnh an toàn cho mobile)
     function skipAudio(seconds) {
-        audio.currentTime += seconds;
+        if (audio.readyState > 0) {
+            audio.currentTime += seconds;
+        }
     }
 
     // Hàm hiển thị/ẩn đáp án gốc
@@ -248,16 +252,14 @@ That is the end of our dictation. Great job, everyone!</span>
     // Hàm chuẩn hóa văn bản
     function cleanText(text) {
         return text.toLowerCase()
-            .replace(/[\n\r]/g, " ") // Biến dấu xuống dòng thành khoảng trắng
-            // Regex đã được tinh chỉnh để an toàn hơn cho các dấu câu thông dụng
+            .replace(/[\n\r]/g, " ") 
             .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"'']/g, "")
-            .replace(/\s{2,}/g, " ") // Gom nhiều khoảng trắng thành 1
+            .replace(/\s{2,}/g, " ") 
             .trim();
     }
 
-    // Hàm kiểm tra bài làm bằng Message Box tùy chỉnh thay vì alert
+    // Hàm kiểm tra bài làm bằng Message Box tùy chỉnh
     function showMessage(msg) {
-        // Tạo một thông báo pop-up nhẹ nhàng thay vì alert
         const dialog = document.createElement('div');
         dialog.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in font-bold flex items-center gap-2';
         dialog.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> ${msg}`;
