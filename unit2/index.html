@@ -82,9 +82,9 @@
                 <div class="w-full max-w-2xl bg-blue-50 border-2 border-dashed border-blue-300 rounded-xl p-6 mb-6 hover:bg-blue-100 hover:border-primary transition-colors cursor-pointer relative group" onclick="document.getElementById('localAudio').click()">
                     <p class="text-slate-700 font-bold mb-3 flex justify-center items-center gap-2">
                         <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        Tải file âm thanh MP3 từ máy tính (Khuyên dùng)
+                        Tải file âm thanh WAV từ máy tính (Khuyên dùng)
                     </p>
-                    <span class="inline-block bg-primary text-white font-bold px-6 py-2.5 rounded-xl shadow-md group-hover:bg-primary-hover group-hover:-translate-y-0.5 transition-all">Chọn file MP3</span>
+                    <span class="inline-block bg-primary text-white font-bold px-6 py-2.5 rounded-xl shadow-md group-hover:bg-primary-hover group-hover:-translate-y-0.5 transition-all">Chọn file WAV</span>
                     <input type="file" id="localAudio" accept="audio/*" class="hidden">
                     <p id="fileNameDisplay" class="text-success font-bold mt-4 hidden"></p>
                 </div>
@@ -102,15 +102,15 @@
                     Mở file Audio trên Google Drive
                 </a>
 
-                <!-- Audio Player -->
+                <!-- Audio Player (Đã sửa lại thành file audio.wav) -->
                 <audio id="myAudio" controls class="w-full max-w-2xl outline-none rounded-full mb-4 shadow-sm">
-                    <source id="audioSource" src="https://drive.google.com/uc?export=download&confirm=t&id=1bXMPg6z_hL_bkNC-X0DCZRwea1eUyEl8" type="audio/mpeg">
+                    <source id="audioSource" src="audio.wav" type="audio/wav">
                     Trình duyệt của bạn không hỗ trợ phát âm thanh.
                 </audio>
 
                 <div id="audioError" class="hidden w-full max-w-2xl bg-red-50 border border-red-200 text-red-600 text-sm p-4 rounded-xl text-left mb-4 shadow-sm">
                     <strong class="flex items-center gap-2 mb-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> Lưu ý:</strong> 
-                    Vì lý do bảo mật của Google Drive, máy nghe nhạc trực tiếp đôi khi không thể phát được. Vui lòng bấm nút xanh lá cây <b>"Mở file Audio trên Google Drive"</b> ở trên hoặc tải file MP3 về máy nhé!
+                    Vì lý do bảo mật của Google Drive, máy nghe nhạc trực tiếp đôi khi không thể phát được. Vui lòng bấm nút xanh lá cây <b>"Mở file Audio trên Google Drive"</b> ở trên hoặc tải file âm thanh về máy nhé!
                 </div>
 
                 <!-- Custom Controls -->
@@ -199,7 +199,7 @@ That is the end of our dictation. Great job, everyone!</span>
     const localAudioInput = document.getElementById('localAudio');
     const fileNameDisplay = document.getElementById('fileNameDisplay');
     
-    // Xử lý khi chọn file MP3 từ máy tính
+    // Xử lý khi chọn file âm thanh từ máy tính
     localAudioInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -212,7 +212,7 @@ That is the end of our dictation. Great job, everyone!</span>
         }
     });
 
-    // Kiểm tra nếu Google Drive từ chối trả về file âm thanh
+    // Kiểm tra nếu xảy ra lỗi trả về file âm thanh
     audioSource.addEventListener('error', function() {
         audioError.classList.remove('hidden');
     });
@@ -248,11 +248,11 @@ That is the end of our dictation. Great job, everyone!</span>
     // Hàm chuẩn hóa văn bản
     function cleanText(text) {
         return text.toLowerCase()
-                   .replace(/[\n\r]/g, " ") // Biến dấu xuống dòng thành khoảng trắng
-                   // Regex đã được tinh chỉnh để an toàn hơn cho các dấu câu thông dụng
-                   .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"'']/g, "")
-                   .replace(/\s{2,}/g, " ") // Gom nhiều khoảng trắng thành 1
-                   .trim();
+            .replace(/[\n\r]/g, " ") // Biến dấu xuống dòng thành khoảng trắng
+            // Regex đã được tinh chỉnh để an toàn hơn cho các dấu câu thông dụng
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"'']/g, "")
+            .replace(/\s{2,}/g, " ") // Gom nhiều khoảng trắng thành 1
+            .trim();
     }
 
     // Hàm kiểm tra bài làm bằng Message Box tùy chỉnh thay vì alert
@@ -363,4 +363,8 @@ That is the end of our dictation. Great job, everyone!</span>
         document.getElementById('btnShowAnswer').classList.add('flex');
         
         // --- BẮT ĐẦU: LOGIC LƯU DỮ LIỆU LÊN GOOGLE SHEETS ---
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfm1njzTVMIbgykXGMFigHdrPn8wTKh_JgOZ1jrXQ6v97gFtHIa24Qh
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfm1njzTVMIbgykXGMFigHdrPn8wTKh_JgOZ1jrXQ6v97gFtHIa24Qh';
+    }
+</script>
+</body>
+</html>
