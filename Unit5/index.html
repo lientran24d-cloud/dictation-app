@@ -102,7 +102,7 @@
                     Mở file Audio trên Google Drive
                 </a>
 
-                <!-- Audio Player (Tối ưu cho Mobile: playsinline, preload="auto") -->
+                <!-- Audio Player Tối ưu cho Mobile (iOS + Android) -->
                 <audio id="myAudio" controls playsinline preload="auto" class="w-full max-w-2xl outline-none rounded-full mb-4 shadow-sm">
                     <source id="audioSource" src="Unit%205.%20My%20Silly%20new%20dog.wav" type="audio/wav">
                     Trình duyệt của bạn không hỗ trợ phát âm thanh.
@@ -147,7 +147,7 @@
             <!-- Đoạn văn gốc (ẩn theo mặc định) -->
             <div id="originalText" class="hidden mt-8 p-6 bg-indigo-50 border-l-4 border-primary rounded-r-2xl shadow-sm text-lg leading-relaxed whitespace-pre-line text-slate-700">
                 <strong class="text-primary flex items-center gap-2 mb-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
                     Đáp án:
                 </strong><span id="correctAnswerText">I got a new dog.
 I brought her home.
@@ -209,11 +209,11 @@ She likes to sleep on people's feet!</span>
             fileNameDisplay.innerHTML = `<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg> Đang phát: ${file.name}`;
             fileNameDisplay.classList.remove('hidden');
             audioError.classList.add('hidden'); // Ẩn thông báo lỗi Drive
-            audio.play().catch(e => console.log("Auto-play prevented by mobile browser rules."));
+            audio.play().catch(e => console.log("Auto-play prevented by mobile browser rules. User needs to tap Play."));
         }
     });
 
-    // Kiểm tra nếu Google Drive từ chối trả về file âm thanh
+    // Kiểm tra nếu xảy ra lỗi trả về file âm thanh
     audioSource.addEventListener('error', function() {
         audioError.classList.remove('hidden');
     });
@@ -251,10 +251,10 @@ She likes to sleep on people's feet!</span>
     // Hàm chuẩn hóa văn bản
     function cleanText(text) {
         return text.toLowerCase()
-                   .replace(/[\n\r]/g, " ") 
-                   .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"'']/g, "")
-                   .replace(/\s{2,}/g, " ") 
-                   .trim();
+            .replace(/[\n\r]/g, " ") 
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"'']/g, "")
+            .replace(/\s{2,}/g, " ") 
+            .trim();
     }
 
     // Hàm kiểm tra bài làm bằng Message Box tùy chỉnh
@@ -364,7 +364,7 @@ She likes to sleep on people's feet!</span>
         document.getElementById('btnShowAnswer').classList.add('flex');
         
         // --- BẮT ĐẦU: LOGIC LƯU DỮ LIỆU LÊN GOOGLE SHEETS ---
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfm1njzTVMIbgykXGMFigHdrPn8wTKh_JgOZ1jrXQ6v97gFtHIa24QhcnzF3CSRGg3Xw/exec'; 
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfm1njzTVMIbgykXGMFigHdrPn8wTKh_JgOZ1jrXQ6v97gFtHIa24QhcnzF3CSRGg3Xw/exec';
         
         const payload = {
             studentName: studentName,
@@ -414,6 +414,5 @@ She likes to sleep on people's feet!</span>
         }, 100);
     }
 </script>
-
 </body>
 </html>
