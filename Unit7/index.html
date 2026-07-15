@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện Nghe Chép Chính Tả (Dictation)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Nunito', 'sans-serif'] },
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-hover': '#4f46e5',
+                        secondary: '#ec4899',
+                        success: '#10b981',
+                        error: '#ef4444',
+                        warning: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans bg-gradient-to-br from-purple-200 via-indigo-100 to-blue-200 min-h-screen p-4 sm:p-8 flex justify-center items-center text-slate-800">
+
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary"></div>
+        <div class="p-6 sm:p-10">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-primary mb-2">Luyện Nghe Chép Chính Tả</h1>
+                <p class="text-slate-500 font-semibold text-lg">Unit 7: Sleepy Jay</p>
+            </div>
+
+            <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 sm:p-5 mb-8 flex items-center gap-4">
+                <label for="studentName" class="font-bold text-slate-700">Tên học sinh:</label>
+                <input type="text" id="studentName" placeholder="Nhập tên..." class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 outline-none focus:border-primary">
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 mb-8 flex flex-col items-center text-center">
+                <button onclick="document.getElementById('localAudio').click()" class="bg-primary text-white font-bold px-6 py-3 rounded-xl mb-6 shadow-md hover:bg-primary-hover">Chọn file WAV từ máy</button>
+                <input type="file" id="localAudio" accept="audio/*" class="hidden">
+                <p id="fileNameDisplay" class="text-success font-bold mb-4 hidden"></p>
+
+                <audio id="myAudio" controls playsinline preload="auto" class="w-full max-w-2xl">
+                    <source id="audioSource" src="Unit%207.%20Sleepy%20Jay.wav" type="audio/wav">
+                    Trình duyệt không hỗ trợ phát âm thanh.
+                </audio>
+            </div>
+
+            <div class="mb-6">
+                <textarea id="userInput" placeholder="Gõ đoạn văn vào đây..." class="w-full h-48 p-5 border-2 border-slate-300 rounded-2xl focus:border-primary"></textarea>
+            </div>
+
+            <div class="flex justify-between items-center pb-8 border-b">
+                <button id="btnShowAnswer" onclick="toggleAnswer()" class="hidden text-slate-500 font-semibold">Xem đáp án</button>
+                <button onclick="checkDictation()" class="bg-gradient-to-r from-primary to-secondary text-white font-extrabold py-3 px-8 rounded-xl">✨ Kiểm tra bài làm</button>
+            </div>
+
+            <div id="originalText" class="hidden mt-8 p-6 bg-indigo-50 border-l-4 border-primary rounded-r-2xl text-slate-700">
+                <strong class="text-primary">Đáp án:</strong>
+                <span id="correctAnswerText">Jay was very sleepy today.
+In the morning, he slept next to his breakfast.
+At school, Jay slept on top of his textbook and under the blackboard.
+On the way home, he fell asleep at the crosswalk.
+Jay slept at the theater, the restaurant, the bookshop, and at church.
+Now it is time for bed.
+Jay lies down with his pillow and blanket.
+"That is funny," Jay thinks.
+"I am not tired anymore."</span>
+            </div>
+
+            <div id="resultSection" class="hidden mt-8 pt-8 border-t">
+                <h2 class="text-2xl font-extrabold mb-4">Kết quả chi tiết</h2>
+                <div id="scoreDisplay" class="text-center bg-slate-50 p-6 rounded-2xl mb-8"></div>
+                <div id="comparisonBox" class="bg-white p-6 rounded-2xl border leading-[2.5] text-lg font-medium"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const audio = document.getElementById('myAudio');
+    const localAudioInput = document.getElementById('localAudio');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    
+    localAudioInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            audio.src = URL.createObjectURL(file);
+            audio.load();
+            fileNameDisplay.innerText = "Đang phát: " + file.name;
+            fileNameDisplay.classList.remove('hidden');
+        }
+    });
+
+    function skipAudio(seconds) { if (audio.readyState > 0) audio.currentTime += seconds; }
+    
+    function toggleAnswer() {
+        const answerBox = document.getElementById('originalText');
+        answerBox.classList.toggle('hidden');
+    }
+
+    function cleanText(text) {
+        return text.toLowerCase().replace(/[\n\r]/g, " ").replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"'']/g, "").replace(/\s{2,}/g, " ").trim();
+    }
+
+    function showMessage(msg) { alert(msg); }
+
+    function checkDictation() {
+        const studentName = document.getElementById('studentName').value.trim();
+        if (!studentName) return showMessage("Vui lòng nhập tên!");
+        
+        const userWords = cleanText(document.getElementById('userInput').value).split(' ').filter(w => w !== "");
+        const correctWords = cleanText(document.getElementById('correctAnswerText').innerText).split(' ').filter(w => w !== "");
+
+        let comparisonHTML = '', correctCount = 0;
+        let i = 0, j = 0;
+
+        while (i < correctWords.length) {
+            if (userWords[j] === correctWords[i]) {
+                comparisonHTML += `<span class="text-success font-bold">${correctWords[i]}</span> `;
+                correctCount++; i++; j++;
+            } else if (userWords[j] && correctWords[i].startsWith(userWords[j].substring(0, 3))) {
+                comparisonHTML += `<span class="line-through text-error">${userWords[j]}</span><span class="text-amber-600 font-bold">${correctWords[i]}</span> `;
+                i++; j++;
+            } else {
+                comparisonHTML += `<span class="text-amber-600 font-bold">${correctWords[i]}</span> `;
+                i++;
+            }
+        }
+
+        const percentage = Math.round((correctCount / correctWords.length) * 100);
+        document.getElementById('scoreDisplay').innerHTML = `<div class="text-2xl font-bold">🎯 Điểm: ${((correctCount / correctWords.length) * 10).toFixed(1)} / 10</div>`;
+        document.getElementById('comparisonBox').innerHTML = comparisonHTML;
+        document.getElementById('resultSection').classList.remove('hidden');
+        document.getElementById('btnShowAnswer').classList.remove('hidden');
+
+        // Lưu lên Google Sheets
+        fetch('https://script.google.com/macros/s/AKfycbwfm1njzTVMIbgykXGMFigHdrPn8wTKh_JgOZ1jrXQ6v97gFtHIa24QhcnzF3CSRGg3Xw/exec', {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({ studentName, lesson: "Unit 7: Sleepy Jay", percentage })
+        });
+    }
+</script>
+</body>
+</html>
