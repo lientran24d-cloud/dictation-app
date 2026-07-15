@@ -102,9 +102,10 @@
                     Mở file Audio trên Google Drive
                 </a>
 
-                <!-- Audio Player Tối ưu cho Mobile (iOS + Android) và chuyển sang dùng file cục bộ -->
+                <!-- Audio Player (Tối ưu cho Mobile: playsinline, preload="auto") -->
                 <audio id="myAudio" controls playsinline preload="auto" class="w-full max-w-2xl outline-none rounded-full mb-4 shadow-sm">
-                    <source id="audioSource" src="Unit%206%20The%20Moon%20Gets%20a%20Friend.wav" type="audio/wav">
+                    <!-- ĐÃ SỬA LỖI THIẾU DẤU CHẤM TRONG TÊN FILE -->
+                    <source id="audioSource" src="Unit%206.%20The%20Moon%20Gets%20a%20Friend.wav" type="audio/wav">
                     Trình duyệt của bạn không hỗ trợ phát âm thanh.
                 </audio>
 
@@ -215,7 +216,7 @@ They rose into the sky together.</span>
         }
     });
 
-    // Kiểm tra nếu xảy ra lỗi trả về file âm thanh
+    // Kiểm tra nếu Google Drive từ chối trả về file âm thanh
     audioSource.addEventListener('error', function() {
         audioError.classList.remove('hidden');
     });
