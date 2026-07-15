@@ -63,7 +63,7 @@
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
                     Luyện Nghe Chép Chính Tả
                 </h1>
-                <p class="text-slate-500 font-semibold text-lg">Insects in the Classroom</p>
+                <p class="text-slate-500 font-semibold text-lg">Unit 2: Insects in the Classroom</p>
             </div>
 
             <!-- Nhập thông tin học sinh -->
@@ -102,10 +102,10 @@
                     Mở file Audio trên Google Drive
                 </a>
 
-                <!-- Audio Player Tối ưu cho Mobile (iOS + Android) -->
-               <audio id="myAudio" controls class="w-full max-w-2xl outline-none rounded-full mb-4 shadow-sm">
-    <source id="audioSource" src="Insects%20in%20the%20Classroom.wav" type="audio/wav">
-    Trình duyệt của bạn không hỗ trợ phát âm thanh.
+                <!-- Đã thêm playsinline và preload="auto" để chạy mượt trên Mobile -->
+                <audio id="myAudio" controls playsinline preload="auto" class="w-full max-w-2xl outline-none rounded-full mb-4 shadow-sm">
+                    <source id="audioSource" src="Insects%20in%20the%20Classroom.wav" type="audio/wav">
+                    Trình duyệt của bạn không hỗ trợ phát âm thanh.
                 </audio>
 
                 <div id="audioError" class="hidden w-full max-w-2xl bg-red-50 border border-red-200 text-red-600 text-sm p-4 rounded-xl text-left mb-4 shadow-sm">
@@ -365,7 +365,45 @@ That is the end of our dictation. Great job, everyone!</span>
         document.getElementById('btnShowAnswer').classList.add('flex');
         
         // --- BẮT ĐẦU: LOGIC LƯU DỮ LIỆU LÊN GOOGLE SHEETS ---
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfm1njzTVMIbgykXGMFigHdrPn8wTKh_JgOZ1jrXQ6v97gFtHIa24Qh';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfm1njzTVMIbgykXGMFigHdrPn8wTKh_JgOZ1jrXQ6v97gFtHIa24QhcnzF3CSRGg3Xw/exec'; 
+        
+        const payload = {
+            studentName: studentName,
+            lesson: "Unit 2: Insects in the Classroom",
+            score10: score10,
+            percentage: percentage,
+            correctCount: correctCount,
+            totalWords: correctWords.length
+        };
+
+        const btnCheck = document.querySelector('button[onclick="checkDictation()"]');
+        const originalBtnText = btnCheck.innerHTML;
+        btnCheck.innerHTML = '⏳ Đang lưu kết quả...';
+        btnCheck.disabled = true;
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Sử dụng no-cors để tránh bị trình duyệt chặn (CORS) từ Google Server
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8',
+            },
+            body: JSON.stringify(payload)
+        }).then(() => {
+            btnCheck.innerHTML = originalBtnText;
+            btnCheck.disabled = false;
+            showMessage("✅ Đã chấm và lưu điểm của bạn lên Google Sheets!");
+        }).catch((error) => {
+            btnCheck.innerHTML = originalBtnText;
+            btnCheck.disabled = false;
+            console.error("Lỗi mạng:", error);
+            showMessage("⚠️ Đã chấm điểm, nhưng có lỗi khi lưu lên hệ thống.");
+        });
+        // --- KẾT THÚC: LOGIC LƯU DỮ LIỆU ---
+
+        // Cuộn xuống mượt mà
+        setTimeout(() => {
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
     }
 </script>
 </body>
