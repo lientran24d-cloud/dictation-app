@@ -1,1 +1,421 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện Nghe Chép Chính Tả (Dictation)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-hover': '#4f46e5',
+                        secondary: '#ec4899',
+                        success: '#10b981',
+                        error: '#ef4444',
+                        warning: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Tùy chỉnh thanh cuộn cho Textarea */
+        textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        textarea::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="font-sans bg-gradient-to-br from-purple-200 via-indigo-100 to-blue-200 min-h-screen p-4 sm:p-8 flex justify-center items-center text-slate-800">
 
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl relative overflow-hidden">
+        <!-- Đường viền gradient phía trên -->
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary"></div>
+
+        <div class="p-6 sm:p-10">
+            <!-- Tiêu đề -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-primary mb-2 flex justify-center items-center gap-3">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+                    Luyện Nghe Chép Chính Tả
+                </h1>
+                <p class="text-slate-500 font-semibold text-lg">Unit 6: The Moon Gets a Friend</p>
+            </div>
+
+            <!-- Nhập thông tin học sinh -->
+            <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 sm:p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-colors focus-within:border-primary">
+                <label for="studentName" class="font-bold text-slate-700 whitespace-nowrap flex items-center gap-2">
+                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    Tên học sinh:
+                </label>
+                <input type="text" id="studentName" placeholder="Nhập họ và tên của bạn vào đây..." class="w-full flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold text-slate-700" required>
+            </div>
+
+            <!-- Phần Audio -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 mb-8 flex flex-col items-center text-center">
+                
+                <!-- Upload File Local -->
+                <div class="w-full max-w-2xl bg-blue-50 border-2 border-dashed border-blue-300 rounded-xl p-6 mb-6 hover:bg-blue-100 hover:border-primary transition-colors cursor-pointer relative group" onclick="document.getElementById('localAudio').click()">
+                    <p class="text-slate-700 font-bold mb-3 flex justify-center items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Tải file âm thanh WAV từ máy tính (Khuyên dùng)
+                    </p>
+                    <span class="inline-block bg-primary text-white font-bold px-6 py-2.5 rounded-xl shadow-md group-hover:bg-primary-hover group-hover:-translate-y-0.5 transition-all">Chọn file WAV</span>
+                    <input type="file" id="localAudio" accept="audio/*" class="hidden">
+                    <p id="fileNameDisplay" class="text-success font-bold mt-4 hidden"></p>
+                </div>
+
+                <div class="flex items-center w-full max-w-2xl mb-6 text-slate-400 font-bold uppercase tracking-wider text-sm">
+                    <div class="flex-1 border-b border-slate-300"></div>
+                    <span class="px-4">Hoặc mở từ Drive</span>
+                    <div class="flex-1 border-b border-slate-300"></div>
+                </div>
+
+                <!-- Drive Fallback -->
+                <p class="text-sm text-slate-500 mb-4 max-w-xl">Nếu giáo viên gửi link bài nghe, hãy bấm nút dưới đây để mở file và nghe trực tiếp trên Google Drive.</p>
+                <a href="https://drive.google.com/file/d/1JumvTp5nLYXMV6pFQJXkslvfWFTxsTJo/view?usp=sharing" target="_blank" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all mb-6">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+                    Mở file Audio trên Google Drive
+                </a>
+
+                <!-- Audio Player (Tối ưu cho Mobile và chuẩn xác tên file không có dấu chấm sau số 6) -->
+                <audio id="myAudio" controls playsinline preload="auto" class="w-full max-w-2xl outline-none rounded-full mb-4 shadow-sm">
+                    <source id="audioSource" src="Unit%206%20The%20Moon%20Gets%20a%20Friend.wav" type="audio/wav">
+                    Trình duyệt của bạn không hỗ trợ phát âm thanh.
+                </audio>
+
+                <div id="audioError" class="hidden w-full max-w-2xl bg-red-50 border border-red-200 text-red-600 text-sm p-4 rounded-xl text-left mb-4 shadow-sm">
+                    <strong class="flex items-center gap-2 mb-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> Lưu ý:</strong> 
+                    Vì lý do bảo mật của Google Drive, máy nghe nhạc trực tiếp đôi khi không thể phát được. Vui lòng bấm nút xanh lá cây <b>"Mở file Audio trên Google Drive"</b> ở trên hoặc tải file âm thanh về máy nhé!
+                </div>
+
+                <!-- Custom Controls -->
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="skipAudio(-5)" class="bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white font-bold py-2 px-6 rounded-full transition-all hover:scale-105 shadow-sm flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg> Lùi 5 giây
+                    </button>
+                    <button onclick="skipAudio(5)" class="bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white font-bold py-2 px-6 rounded-full transition-all hover:scale-105 shadow-sm flex items-center gap-2">
+                        Tiến 5 giây <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Phần nhập liệu -->
+            <div class="mb-6">
+                <label for="userInput" class="flex items-center gap-2 font-bold text-lg text-slate-800 mb-3">
+                    ✍️ Lắng nghe và gõ lại chính xác đoạn văn:
+                </label>
+                <textarea id="userInput" placeholder="The moon was alone..." class="w-full h-48 p-5 bg-slate-50 border-2 border-slate-300 rounded-2xl text-lg resize-y focus:outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all leading-relaxed shadow-inner"></textarea>
+            </div>
+
+            <!-- Các nút hành động -->
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-slate-100 pb-8">
+                <button id="btnShowAnswer" onclick="toggleAnswer()" class="hidden items-center gap-2 text-slate-500 font-semibold hover:text-primary transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    <span id="btnShowAnswerText">Xem đáp án gốc</span>
+                </button>
+                <div class="flex-1"></div> <!-- Spacer -->
+                <button onclick="checkDictation()" class="w-full sm:w-auto bg-gradient-to-r from-primary to-secondary hover:from-primary-hover hover:to-pink-600 text-white font-extrabold text-lg py-3 px-8 rounded-xl shadow-[0_8px_20px_rgba(236,72,153,0.3)] hover:shadow-[0_12px_25px_rgba(236,72,153,0.4)] hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
+                    ✨ Kiểm tra bài làm
+                </button>
+            </div>
+
+            <!-- Đoạn văn gốc (ẩn theo mặc định) -->
+            <div id="originalText" class="hidden mt-8 p-6 bg-indigo-50 border-l-4 border-primary rounded-r-2xl shadow-sm text-lg leading-relaxed whitespace-pre-line text-slate-700">
+                <strong class="text-primary flex items-center gap-2 mb-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                    Đáp án:
+                </strong><span id="correctAnswerText">The moon was alone.
+She wanted a friend.
+"The stars are too far away. Everyone else is sleeping," she cried.
+The moon was sad.
+"Will I ever find a friend?" she whispered.
+"Soon you will find a friend!" said a voice.
+"Soon? Who is there?" asked the moon.
+"I am Owl!" said the owl.
+"I will be your friend. I am awake all night."
+The moon was happy.
+The owl was happy.
+They rose into the sky together.</span>
+            </div>
+
+            <!-- Kết quả kiểm tra -->
+            <div id="resultSection" class="hidden mt-8 pt-8 border-t border-slate-200 animate-fade-in">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 border-b-2 border-slate-100 pb-4">
+                    <h2 class="text-2xl font-extrabold text-slate-800">Kết quả chi tiết</h2>
+                    <span id="displayStudentName" class="text-primary bg-indigo-50 px-4 py-2 rounded-full font-bold shadow-sm border border-indigo-100"></span>
+                </div>
+                
+                <div id="scoreDisplay" class="text-center bg-slate-50 p-6 rounded-2xl mb-8 border border-slate-100 shadow-sm"></div>
+                
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm leading-[2.5] text-lg font-medium text-slate-700">
+                    <div id="comparisonBox"></div>
+                </div>
+                
+                <!-- Chú thích màu sắc -->
+                <div class="flex flex-wrap justify-center gap-6 mt-6 pt-4 border-t border-slate-100">
+                    <div class="flex items-center gap-2 text-sm font-bold text-slate-600">
+                        <span class="w-4 h-4 rounded bg-success shadow-sm"></span> Đúng
+                    </div>
+                    <div class="flex items-center gap-2 text-sm font-bold text-slate-600">
+                        <span class="w-4 h-4 rounded bg-red-100 border border-error shadow-sm"></span> Sai / Dư
+                    </div>
+                    <div class="flex items-center gap-2 text-sm font-bold text-slate-600">
+                        <span class="w-4 h-4 rounded bg-amber-100 border border-warning shadow-sm"></span> Thiếu từ
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+    const audio = document.getElementById('myAudio');
+    const audioSource = document.getElementById('audioSource');
+    const audioError = document.getElementById('audioError');
+    const localAudioInput = document.getElementById('localAudio');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    
+    // Xử lý khi chọn file âm thanh từ máy tính/điện thoại
+    localAudioInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const fileURL = URL.createObjectURL(file);
+            audio.src = fileURL;
+            audio.load(); // Ép trình duyệt thiết bị di động tải lại tài nguyên mới
+            
+            fileNameDisplay.innerHTML = `<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg> Đang phát: ${file.name}`;
+            fileNameDisplay.classList.remove('hidden');
+            audioError.classList.add('hidden'); // Ẩn thông báo lỗi Drive
+            audio.play().catch(e => console.log("Auto-play prevented by mobile browser rules."));
+        }
+    });
+
+    // Kiểm tra nếu Google Drive từ chối trả về file âm thanh
+    audioSource.addEventListener('error', function() {
+        audioError.classList.remove('hidden');
+    });
+
+    // Bắt lỗi tổng quát trên thẻ audio
+    audio.addEventListener('error', function() {
+        if(!audio.src.startsWith('blob:')) {
+            audioError.classList.remove('hidden');
+        }
+    });
+
+    // Hàm tua audio (Đã tinh chỉnh an toàn cho mobile)
+    function skipAudio(seconds) {
+        if (audio.readyState > 0) {
+            audio.currentTime += seconds;
+        }
+    }
+
+    // Hàm hiển thị/ẩn đáp án gốc
+    function toggleAnswer() {
+        const answerBox = document.getElementById('originalText');
+        const btnText = document.getElementById('btnShowAnswerText');
+        
+        if (answerBox.classList.contains('hidden')) {
+            answerBox.classList.remove('hidden');
+            answerBox.classList.add('animate-fade-in');
+            btnText.innerHTML = 'Ẩn đáp án gốc';
+        } else {
+            answerBox.classList.add('hidden');
+            answerBox.classList.remove('animate-fade-in');
+            btnText.innerHTML = 'Xem đáp án gốc';
+        }
+    }
+
+    // Hàm chuẩn hóa văn bản
+    function cleanText(text) {
+        return text.toLowerCase()
+                   .replace(/[\n\r]/g, " ") 
+                   .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"'']/g, "")
+                   .replace(/\s{2,}/g, " ") 
+                   .trim();
+    }
+
+    // Hàm kiểm tra bài làm bằng Message Box tùy chỉnh
+    function showMessage(msg) {
+        const dialog = document.createElement('div');
+        dialog.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in font-bold flex items-center gap-2';
+        dialog.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> ${msg}`;
+        document.body.appendChild(dialog);
+        setTimeout(() => {
+            dialog.style.opacity = '0';
+            dialog.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => dialog.remove(), 300);
+        }, 3000);
+    }
+
+    function checkDictation() {
+        const studentNameInput = document.getElementById('studentName');
+        const userInputBox = document.getElementById('userInput');
+        const studentName = studentNameInput.value.trim();
+        
+        if (!studentName) {
+            showMessage("Vui lòng nhập tên của bạn trước khi kiểm tra nhé!");
+            studentNameInput.focus();
+            return;
+        }
+
+        const userTextRaw = userInputBox.value;
+        const correctTextRaw = document.getElementById('correctAnswerText').innerText;
+        
+        if (!userTextRaw.trim()) {
+            showMessage("Vui lòng gõ nội dung bạn nghe được vào ô trống trước khi nộp bài!");
+            userInputBox.focus();
+            return;
+        }
+
+        // Tách thành mảng các từ
+        const userWords = cleanText(userTextRaw).split(' ').filter(w => w !== "");
+        const correctWords = cleanText(correctTextRaw).split(' ').filter(w => w !== "");
+
+        let comparisonHTML = '';
+        let correctCount = 0;
+        
+        let i = 0; // index cho đáp án gốc
+        let j = 0; // index cho bài làm của user
+
+        while (i < correctWords.length) {
+            const expectedWord = correctWords[i];
+            const typedWord = userWords[j];
+
+            if (typedWord === expectedWord) {
+                // Gõ đúng
+                comparisonHTML += `<span class="text-success font-bold px-1">${expectedWord}</span> `;
+                correctCount++;
+                i++;
+                j++;
+            } else if (typedWord && expectedWord.startsWith(typedWord.substring(0, 3)) && typedWord.length > 2) {
+                 // Gõ gần đúng (sai chính tả nhẹ)
+                comparisonHTML += `<span class="line-through text-error bg-red-100 px-1 rounded mx-0.5">${typedWord}</span><span class="text-amber-600 bg-amber-100 font-bold px-1 rounded mx-0.5">${expectedWord}</span> `;
+                i++;
+                j++;
+            } else if (!typedWord || (userWords.indexOf(expectedWord, j) === -1)) {
+                // Người dùng bỏ sót từ này
+                comparisonHTML += `<span class="text-amber-600 bg-amber-100 font-bold px-1 rounded mx-0.5">${expectedWord}</span> `;
+                i++;
+            } else {
+                // Người dùng gõ sai hoặc gõ dư từ
+                comparisonHTML += `<span class="line-through text-error bg-red-100 px-1 rounded mx-0.5">${typedWord}</span> `;
+                j++;
+            }
+        }
+        
+        // Xử lý những từ người dùng gõ dư ở cuối
+        while(j < userWords.length) {
+            if(userWords[j].trim() !== "") {
+                 comparisonHTML += `<span class="line-through text-error bg-red-100 px-1 rounded mx-0.5">${userWords[j]}</span> `;
+            }
+            j++;
+        }
+
+        // Tính toán điểm số
+        const percentage = Math.round((correctCount / correctWords.length) * 100);
+        const score10 = parseFloat(((correctCount / correctWords.length) * 10).toFixed(1));
+
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const comparisonBox = document.getElementById('comparisonBox');
+        const resultSection = document.getElementById('resultSection');
+        const displayStudentName = document.getElementById('displayStudentName');
+
+        // Cập nhật giao diện kết quả
+        displayStudentName.innerText = `👤 ${studentName}`;
+
+        // Định dạng màu sắc điểm số
+        let scoreColorClass = 'text-error';
+        if (percentage >= 90) scoreColorClass = 'text-success';
+        else if (percentage >= 50) scoreColorClass = 'text-warning';
+
+        scoreDisplay.innerHTML = `
+            <div class="text-3xl font-extrabold ${scoreColorClass} mb-2">🎯 Điểm: ${score10} / 10</div>
+            <div class="text-slate-500 font-bold">(Độ chính xác: ${percentage}% &bull; Nghe đúng ${correctCount} / ${correctWords.length} từ)</div>
+        `;
+        
+        comparisonBox.innerHTML = comparisonHTML;
+        
+        // Hiển thị kết quả & Nút xem đáp án
+        resultSection.classList.remove('hidden');
+        document.getElementById('btnShowAnswer').classList.remove('hidden');
+        document.getElementById('btnShowAnswer').classList.add('flex');
+        
+        // --- BẮT ĐẦU: LOGIC LƯU DỮ LIỆU LÊN GOOGLE SHEETS ---
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfm1njzTVMIbgykXGMFigHdrPn8wTKh_JgOZ1jrXQ6v97gFtHIa24QhcnzF3CSRGg3Xw/exec'; 
+        
+        const payload = {
+            studentName: studentName,
+            lesson: "Unit 6: The Moon Gets a Friend",
+            score10: score10,
+            percentage: percentage,
+            correctCount: correctCount,
+            totalWords: correctWords.length
+        };
+
+        const btnCheck = document.querySelector('button[onclick="checkDictation()"]');
+        const originalBtnText = btnCheck.innerHTML;
+        btnCheck.innerHTML = '⏳ Đang lưu kết quả...';
+        btnCheck.disabled = true;
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Sử dụng no-cors để tránh bị trình duyệt chặn (CORS) từ Google Server
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8',
+            },
+            body: JSON.stringify(payload)
+        }).then(() => {
+            btnCheck.innerHTML = originalBtnText;
+            btnCheck.disabled = false;
+            // Thay đổi icon thông báo cho thành công
+            const dialog = document.createElement('div');
+            dialog.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-indigo-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in font-bold flex items-center gap-2';
+            dialog.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ✅ Đã chấm và lưu điểm của bạn lên Google Sheets!`;
+            document.body.appendChild(dialog);
+            setTimeout(() => {
+                dialog.style.opacity = '0';
+                dialog.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => dialog.remove(), 300);
+            }, 3000);
+        }).catch((error) => {
+            btnCheck.innerHTML = originalBtnText;
+            btnCheck.disabled = false;
+            console.error("Lỗi mạng:", error);
+            showMessage("⚠️ Đã chấm điểm, nhưng có lỗi khi lưu lên hệ thống.");
+        });
+        // --- KẾT THÚC: LOGIC LƯU DỮ LIỆU ---
+
+        // Cuộn xuống mượt mà
+        setTimeout(() => {
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
+</script>
+
+</body>
+</html>
