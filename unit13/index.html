@@ -1,1 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện Nghe Chép Chính Tả (Dictation)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="font-sans bg-gradient-to-br from-purple-200 via-indigo-100 to-blue-200 min-h-screen p-4 flex justify-center items-center">
 
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl p-10">
+        <h1 class="text-3xl font-extrabold text-primary text-center mb-8">Unit 13: Uncle Ted's Motorcycle</h1>
+        
+        <!-- Khu vực Audio -->
+        <div class="bg-slate-50 border-2 border-dashed border-primary rounded-2xl p-8 mb-8 text-center">
+            <p class="font-bold text-slate-700 mb-4">Nhấn nút bên dưới để mở bài nghe:</p>
+            <a href="https://drive.google.com/file/d/15cZKw9w7vgGK8RgOALnWxkYSs-az5Zt7/view?usp=sharing" target="_blank" 
+               class="inline-block bg-primary text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:bg-primary-hover transition-all">
+                🎧 BẤM VÀO ĐÂY ĐỂ NGHE BÀI AUDIO
+            </a>
+            <p class="text-xs text-slate-400 mt-4 italic">Nếu bạn dùng điện thoại, bài nghe sẽ mở ở tab mới. Hãy quay lại đây để làm bài nhé!</p>
+        </div>
+
+        <!-- Nhập liệu -->
+        <input type="text" id="studentName" placeholder="Tên học sinh" class="w-full border-2 border-slate-300 rounded-xl p-4 mb-4">
+        <textarea id="userInput" placeholder="Gõ nội dung nghe được..." class="w-full h-48 p-5 border-2 border-slate-300 rounded-2xl mb-6"></textarea>
+        
+        <button onclick="checkDictation()" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl">Kiểm tra kết quả</button>
+
+        <div id="resultSection" class="hidden mt-8 pt-8 border-t">
+            <div id="scoreDisplay" class="text-2xl font-bold text-center mb-4"></div>
+            <div id="comparisonBox" class="bg-slate-100 p-6 rounded-xl leading-loose"></div>
+        </div>
+    </div>
+
+<script>
+    function checkDictation() {
+        const studentName = document.getElementById('studentName').value.trim();
+        const userInput = document.getElementById('userInput').value;
+        if (!studentName) return alert("Nhập tên nhé!");
+        
+        const correctText = "One Sunday, Jay's Mom had a surprise for him. \"Uncle Ted is visiting today,\" said Mom. \"Is he bringing his motorcycle?\" Jay asked. \"He sure is,\" said Mom. Later that day, Uncle Ted arrived. \"Brrrrrmmmmmmm,\" went the motorcycle. \"Do you want to sit on the motorcycle, Jay?\" asked Uncle Ted. \"Yes, please!\" Jay said. Jay put on Uncle Ted's helmet and climbed on. \"Brrrrrmmmmmmm,\" said Jay. \"Are you an engine, Jay?\" asked Uncle Ted. \"Yes, I am!\" Jay laughed.";
+        
+        const clean = (str) => str.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"'']/g, "").replace(/\s{2,}/g, " ").trim();
+        const userWords = clean(userInput).split(' ');
+        const correctWords = clean(correctText).split(' ');
+        
+        let correctCount = 0;
+        let html = "";
+        
+        correctWords.forEach((word, index) => {
+            if (userWords[index] === word) {
+                html += `<span class="text-green-600 font-bold">${word}</span> `;
+                correctCount++;
+            } else {
+                html += `<span class="text-red-600 font-bold border-b border-red-300">${word}</span> `;
+            }
+        });
+
+        document.getElementById('scoreDisplay').innerText = `Điểm: ${((correctCount/correctWords.length)*10).toFixed(1)}/10`;
+        document.getElementById('comparisonBox').innerHTML = html;
+        document.getElementById('resultSection').classList.remove('hidden');
+
+        // Gửi lên Sheets
+        fetch('https://script.google.com/macros/s/AKfycbwfm1njzTVMIbgykXGMFigHdrPn8wTKh_JgOZ1jrXQ6v97gFtHIa24QhcnzF3CSRGg3Xw/exec', {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({ studentName, lesson: "Unit 13", percentage: Math.round((correctCount/correctWords.length)*100) })
+        });
+    }
+</script>
+</body>
+</html>
