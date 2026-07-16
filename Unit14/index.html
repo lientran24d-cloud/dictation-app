@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện Nghe Chép Chính Tả (Dictation)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Nunito', 'sans-serif'] },
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-hover': '#4f46e5',
+                        secondary: '#ec4899',
+                        success: '#10b981',
+                        error: '#ef4444',
+                        warning: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        textarea::-webkit-scrollbar { width: 8px; }
+        textarea::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        textarea::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        textarea::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="font-sans bg-gradient-to-br from-purple-200 via-indigo-100 to-blue-200 min-h-screen p-4 sm:p-8 flex justify-center items-center text-slate-800">
+
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary"></div>
+        <div class="p-6 sm:p-10">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-primary mb-2 flex justify-center items-center gap-3">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+                    Luyện Nghe Chép Chính Tả
+                </h1>
+                <p class="text-slate-500 font-semibold text-lg">Unit 14: Fishing</p>
+            </div>
+
+            <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 sm:p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <label for="studentName" class="font-bold text-slate-700 whitespace-nowrap">Tên học sinh:</label>
+                <input type="text" id="studentName" placeholder="Nhập họ và tên..." class="w-full flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 outline-none focus:border-primary">
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 mb-8 flex flex-col items-center text-center">
+                <div class="w-full max-w-2xl bg-blue-50 border-2 border-dashed border-blue-300 rounded-xl p-6 mb-6 cursor-pointer" onclick="document.getElementById('localAudio').click()">
+                    <p class="text-slate-700 font-bold mb-3">Tải file âm thanh WAV từ máy tính</p>
+                    <span class="inline-block bg-primary text-white font-bold px-6 py-2.5 rounded-xl shadow-md">Chọn file WAV</span>
+                    <input type="file" id="localAudio" accept="audio/*" class="hidden">
+                    <p id="fileNameDisplay" class="text-success font-bold mt-4 hidden"></p>
+                </div>
+                <audio id="myAudio" controls playsinline preload="auto" class="w-full max-w-2xl">
+                    <source id="audioSource" src="Unit 14 Fishing.wav" type="audio/wav">
+                    Trình duyệt của bạn không hỗ trợ phát âm thanh.
+                </audio>
+            </div>
+
+            <div class="mb-6">
+                <textarea id="userInput" placeholder="Gõ nội dung nghe được..." class="w-full h-48 p-5 border-2 border-slate-300 rounded-2xl focus:border-primary"></textarea>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-slate-100 pb-8">
+                <button id="btnShowAnswer" onclick="toggleAnswer()" class="hidden items-center gap-2 text-slate-500 font-semibold hover:text-primary"><span id="btnShowAnswerText">Xem đáp án gốc</span></button>
+                <button onclick="checkDictation()" class="w-full sm:w-auto bg-gradient-to-r from-primary to-secondary text-white font-extrabold py-3 px-8 rounded-xl shadow-lg">✨ Kiểm tra bài làm</button>
+            </div>
+
+            <div id="originalText" class="hidden mt-8 p-6 bg-indigo-50 border-l-4 border-primary rounded-r-2xl text-slate-700 whitespace-pre-line">
+                <strong class="text-primary">Đáp án:</strong>
+                <span id="correctAnswerText">A farmer went to his field to dig his peanuts.
+He started digging.
+He hit something large and hard.
+"That is not a peanut," said the farmer.
+"It's a bone."
+The farmer kept digging.
+What did he find?
+He found a whole dinosaur in his peanut field!
+"I will send it to the museum," he thought.
+Then he wondered.
+"What will I find in my pumpkin field?" he said to himself.
+Off he went to dig some more.</span>
+            </div>
+
+            <div id="resultSection" class="hidden mt-8 pt-8 border-t border-slate-200 animate-fade-in">
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <h2 class="text-2xl font-extrabold text-slate-800">Kết quả chi tiết</h2>
+                    <span id="displayStudentName" class="text-primary font-bold"></span>
+                </div>
+                <div id="scoreDisplay" class="text-center bg-slate-50 p-6 rounded-2xl mb-8"></div>
+                <div id="comparisonBox" class="bg-white p-6 rounded-2xl border leading-[2.5] text-lg font-medium text-slate-700"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const audio = document.getElementById('myAudio');
+    const localAudioInput = document.getElementById('localAudio');
+    
+    localAudioInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            audio.src = URL.createObjectURL(file);
+            audio.load();
+            document.getElementById('fileNameDisplay').innerHTML = "Đang phát: " + file.name;
+            document.getElementById('fileNameDisplay').classList.remove('hidden');
+            audio.play();
+        }
+    });
+
+    function toggleAnswer() {
+        const box = document.getElementById('originalText');
+        box.classList.toggle('hidden');
+        document.getElementById('btnShowAnswerText').innerText = box.classList.contains('hidden') ? 'Xem đáp án gốc' : 'Ẩn đáp án gốc';
+    }
+
+    function cleanText(text) {
+        return text.toLowerCase().replace(/[\n\r]/g, " ").replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"'']/g, "").replace(/\s{2,}/g, " ").trim();
+    }
+
+    function checkDictation() {
+        const studentName = document.getElementById('studentName').value.trim();
+        const userInput = document.getElementById('userInput').value;
+        if (!studentName) return alert("Vui lòng nhập tên!");
+        if (!userInput.trim()) return alert("Vui lòng nhập nội dung!");
+
+        const userWords = cleanText(userInput).split(' ');
+        const correctWords = cleanText(document.getElementById('correctAnswerText').innerText).split(' ');
+        
+        let correctCount = 0, html = "";
+        correctWords.forEach((word, i) => {
+            if (userWords[i] === word) { html += `<span class="text-success font-bold">${word}</span> `; correctCount++; }
+            else { html += `<span class="text-amber-600 font-bold border-b border-amber-300">${word}</span> `; }
+        });
+
+        const percentage = Math.round((correctCount / correctWords.length) * 100);
+        document.getElementById('scoreDisplay').innerHTML = `<div class="text-3xl font-extrabold text-success">🎯 Điểm: ${((correctCount / correctWords.length) * 10).toFixed(1)} / 10</div>`;
+        document.getElementById('comparisonBox').innerHTML = html;
+        document.getElementById('resultSection').classList.remove('hidden');
+        document.getElementById('btnShowAnswer').classList.remove('hidden');
+
+        fetch('https://script.google.com/macros/s/AKfycbwfm1njzTVMIbgykXGMFigHdrPn8wTKh_JgOZ1jrXQ6v97gFtHIa24QhcnzF3CSRGg3Xw/exec', {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({ studentName, lesson: "Unit 14: Fishing", percentage })
+        });
+        document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+    }
+    function skipAudio(s) { audio.currentTime += s; }
+</script>
+</body>
+</html>
